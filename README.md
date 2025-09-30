@@ -263,6 +263,9 @@ uvicorn core.app:app --host 0.0.0.0 --port 8000 --reload
 ```bash
 cd frontend
 npm run dev
+
+npm run dev -- --host 0.0.0.0 --port 3000
+
 ```
 
 #### 5. 访问应用
