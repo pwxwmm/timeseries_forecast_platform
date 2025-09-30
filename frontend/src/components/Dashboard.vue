@@ -126,6 +126,44 @@
       </div>
     </div>
 
+    <!-- 快速操作 -->
+    <div class="quick-actions-section">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="header-left">
+            <h3 class="card-title">快速操作</h3>
+            <p class="card-subtitle">常用功能快速访问</p>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <el-button
+            type="primary"
+            size="large"
+            @click="$router.push('/tasks/new')"
+          >
+            <el-icon><Plus /></el-icon>
+            创建新任务
+          </el-button>
+          <el-button
+            type="success"
+            size="large"
+            @click="$router.push('/models')"
+          >
+            <el-icon><Cpu /></el-icon>
+            管理模型
+          </el-button>
+          <el-button
+            type="info"
+            size="large"
+            @click="showPredictionDialog = true"
+          >
+            <el-icon><TrendCharts /></el-icon>
+            快速预测
+          </el-button>
+        </div>
+      </div>
+    </div>
+
     <!-- 任务趋势图 -->
     <div class="trend-chart-section">
       <TaskTrendChart />
@@ -251,42 +289,6 @@
       </div>
     </div>
 
-    <!-- 快速操作 -->
-    <el-row :gutter="20" class="quick-actions">
-      <el-col :span="24">
-        <el-card class="content-card">
-          <template #header>
-            <span>快速操作</span>
-          </template>
-          <div class="action-buttons">
-            <el-button
-              type="primary"
-              size="large"
-              @click="$router.push('/tasks/new')"
-            >
-              <el-icon><Plus /></el-icon>
-              创建新任务
-            </el-button>
-            <el-button
-              type="success"
-              size="large"
-              @click="$router.push('/models')"
-            >
-              <el-icon><Cpu /></el-icon>
-              管理模型
-            </el-button>
-            <el-button
-              type="info"
-              size="large"
-              @click="showPredictionDialog = true"
-            >
-              <el-icon><TrendCharts /></el-icon>
-              快速预测
-            </el-button>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
 
     <!-- 快速预测对话框 -->
     <el-dialog
@@ -743,6 +745,30 @@ onMounted(() => {
   color: #d97706;
 }
 
+/* 快速操作区域 */
+.quick-actions-section {
+  margin-bottom: 24px;
+}
+
+.quick-actions-section .action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.quick-actions-section .action-buttons .el-button {
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.quick-actions-section .action-buttons .el-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
 /* 趋势图区域 */
 .trend-chart-section {
   margin-bottom: 20px;
@@ -943,32 +969,6 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 
-/* 快速操作 */
-.quick-actions {
-  margin-bottom: 24px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  padding: 24px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.action-buttons .el-button {
-  border-radius: 12px;
-  padding: 16px 32px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.action-buttons .el-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
 
 /* 对话框 */
 .dialog-footer {
@@ -1034,7 +1034,7 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
   
-  .action-buttons {
+  .quick-actions-section .action-buttons {
     flex-direction: column;
   }
 }

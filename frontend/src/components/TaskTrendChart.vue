@@ -19,7 +19,7 @@
     
     <div class="chart-container">
       <div class="chart" v-loading="loading">
-        <svg class="trend-svg" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
+        <svg class="trend-svg" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet">
           <!-- 渐变定义 -->
           <defs>
             <linearGradient id="createdGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -39,8 +39,8 @@
           <!-- 网格线 -->
           <g class="grid-lines">
             <line v-for="i in 5" :key="i" 
-                  :x1="80" :y1="60 + (i-1) * 48" 
-                  :x2="720" :y2="60 + (i-1) * 48" 
+                  :x1="100" :y1="80 + (i-1) * 64" 
+                  :x2="900" :y2="80 + (i-1) * 64" 
                   stroke="#f3f4f6" stroke-width="1" stroke-dasharray="2,2" />
           </g>
           
@@ -102,25 +102,25 @@
                     class="data-point pending-point" />
           </g>
           
-          <!-- X轴标签 -->
-          <g class="x-axis-labels">
-            <text v-for="(label, index) in xAxisLabels" 
-                  :key="index"
-                  :x="80 + index * 80" 
-                  y="280" 
-                  text-anchor="middle" 
-                  class="axis-label">{{ label }}</text>
-          </g>
-          
-          <!-- Y轴标签 -->
-          <g class="y-axis-labels">
-            <text v-for="(label, index) in yAxisLabels" 
-                  :key="index"
-                  x="70" 
-                  :y="60 + index * 48 + 5" 
-                  text-anchor="end" 
-                  class="axis-label">{{ label }}</text>
-          </g>
+                  <!-- X轴标签 -->
+                  <g class="x-axis-labels">
+                    <text v-for="(label, index) in xAxisLabels" 
+                          :key="index"
+                          :x="100 + index * 100" 
+                          y="360" 
+                          text-anchor="middle" 
+                          class="axis-label">{{ label }}</text>
+                  </g>
+                  
+                  <!-- Y轴标签 -->
+                  <g class="y-axis-labels">
+                    <text v-for="(label, index) in yAxisLabels" 
+                          :key="index"
+                          x="90" 
+                          :y="80 + index * 64 + 5" 
+                          text-anchor="end" 
+                          class="axis-label">{{ label }}</text>
+                  </g>
         </svg>
       </div>
     </div>
@@ -213,7 +213,7 @@ const createdPath = computed(() => {
     const cp2y = curr.y
     path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`
   }
-  path += ` L ${points[points.length - 1].x} 252 L 80 252 Z`
+          path += ` L ${points[points.length - 1].x} 336 L 100 336 Z`
   return path
 })
 
@@ -246,7 +246,7 @@ const completedPath = computed(() => {
     const cp2y = curr.y
     path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`
   }
-  path += ` L ${points[points.length - 1].x} 252 L 80 252 Z`
+          path += ` L ${points[points.length - 1].x} 336 L 100 336 Z`
   return path
 })
 
@@ -279,7 +279,7 @@ const pendingPath = computed(() => {
     const cp2y = curr.y
     path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${curr.x} ${curr.y}`
   }
-  path += ` L ${points[points.length - 1].x} 252 L 80 252 Z`
+          path += ` L ${points[points.length - 1].x} 336 L 100 336 Z`
   return path
 })
 
@@ -326,22 +326,22 @@ const generateMockData = (days = 30) => {
       pending: Math.max(0, created - completed)
     })
     
-    // 生成 X 轴标签
-    if (days <= 7) {
-      labels.push(`${date.getMonth() + 1}/${date.getDate()}`)
-    } else if (days <= 30) {
-      if (i % 5 === 0) {
-        labels.push(`${date.getMonth() + 1}/${date.getDate()}`)
-      } else {
-        labels.push('')
-      }
-    } else {
-      if (i % 10 === 0) {
-        labels.push(`${date.getMonth() + 1}/${date.getDate()}`)
-      } else {
-        labels.push('')
-      }
-    }
+        // 生成 X 轴标签
+        if (days <= 7) {
+          labels.push(`${date.getMonth() + 1}/${date.getDate()}`)
+        } else if (days <= 30) {
+          if (i % 4 === 0) {
+            labels.push(`${date.getMonth() + 1}/${date.getDate()}`)
+          } else {
+            labels.push('')
+          }
+        } else {
+          if (i % 8 === 0) {
+            labels.push(`${date.getMonth() + 1}/${date.getDate()}`)
+          } else {
+            labels.push('')
+          }
+        }
   }
   
   xAxisLabels.value = labels
@@ -372,38 +372,38 @@ const calculateStats = (data) => {
   rateTrend.value = firstHalfRate > 0 ? Math.round(secondHalfRate - firstHalfRate) : 0
 }
 
-// 生成图表点数据
-const generateChartPoints = (data) => {
-  const maxValue = Math.max(...data.map(item => Math.max(item.created, item.completed, item.pending)))
-  const scale = maxValue > 0 ? 192 / maxValue : 1 // 192 是图表高度
-  
-  const newCreatedPoints = []
-  const newCompletedPoints = []
-  const newPendingPoints = []
-  
-  data.forEach((item, index) => {
-    const x = 80 + (index * 640) / (data.length - 1)
-    
-    newCreatedPoints.push({
-      x,
-      y: 252 - item.created * scale
-    })
-    
-    newCompletedPoints.push({
-      x,
-      y: 252 - item.completed * scale
-    })
-    
-    newPendingPoints.push({
-      x,
-      y: 252 - item.pending * scale
-    })
-  })
-  
-  createdPoints.value = newCreatedPoints
-  completedPoints.value = newCompletedPoints
-  pendingPoints.value = newPendingPoints
-}
+        // 生成图表点数据
+        const generateChartPoints = (data) => {
+          const maxValue = Math.max(...data.map(item => Math.max(item.created, item.completed, item.pending)))
+          const scale = maxValue > 0 ? 256 / maxValue : 1 // 256 是图表高度
+          
+          const newCreatedPoints = []
+          const newCompletedPoints = []
+          const newPendingPoints = []
+          
+          data.forEach((item, index) => {
+            const x = 100 + (index * 800) / (data.length - 1)
+            
+            newCreatedPoints.push({
+              x,
+              y: 336 - item.created * scale
+            })
+            
+            newCompletedPoints.push({
+              x,
+              y: 336 - item.completed * scale
+            })
+            
+            newPendingPoints.push({
+              x,
+              y: 336 - item.pending * scale
+            })
+          })
+          
+          createdPoints.value = newCreatedPoints
+          completedPoints.value = newCompletedPoints
+          pendingPoints.value = newPendingPoints
+        }
 
 // 初始化图表
 const initChart = () => {
@@ -484,7 +484,7 @@ onMounted(() => {
 
 .chart {
   width: 100%;
-  height: 300px;
+  height: 400px;
   position: relative;
   overflow: hidden;
 }
