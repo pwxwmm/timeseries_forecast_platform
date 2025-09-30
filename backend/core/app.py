@@ -15,11 +15,39 @@ from typing import List, Optional, Dict, Any
 import logging
 from datetime import datetime, timedelta
 import asyncio
-from contextlib import asynccontextmanager
 
-from .prometheus_api import PrometheusAPI, PrometheusConfig, create_feature_matrix
-from .forecast import TimeSeriesPredictor, ModelConfig
-from .store import JSONStore, Task, Model, User
+try:
+    from contextlib import asynccontextmanager
+except ImportError:
+    # Python 3.6 兼容性：手动实现 asynccontextmanager
+    from contextlib import contextmanager
+    from functools import wraps
+
+    def asynccontextmanager(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return _AsyncGeneratorContextManager(func(*args, **kwargs))
+
+        return wrapper
+
+    class _AsyncGeneratorContextManager:
+        def __init__(self, gen):
+            self.gen = gen
+
+        async def __aenter__(self):
+            return await self.gen.__anext__()
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            try:
+                await self.gen.__anext__()
+            except StopAsyncIteration:
+                pass
+            return False
+
+
+from prometheus_api import PrometheusAPI, PrometheusConfig, create_feature_matrix
+from forecast import TimeSeriesPredictor, ModelConfig
+from store import JSONStore, Task, Model, User
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -141,10 +169,19 @@ class UserResponse(BaseModel):
 
 # 依赖注入
 def get_store() -> JSONStore:
+    global store
+    if store is None:
+        logger.warning("Store not initialized, creating new instance")
+        store = JSONStore()
     return store
 
 
 def get_prometheus_api() -> PrometheusAPI:
+    global prometheus_api
+    if prometheus_api is None:
+        logger.warning("PrometheusAPI not initialized, creating new instance")
+        prometheus_config = PrometheusConfig()
+        prometheus_api = PrometheusAPI(prometheus_config)
     return prometheus_api
 
 

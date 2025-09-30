@@ -7,17 +7,17 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 import App from './App.vue'
 import Dashboard from './components/Dashboard.vue'
-import TaskList from './components/TaskList.vue'
-import TaskEditor from './components/TaskEditor.vue'
-import ModelManager from './components/ModelManager.vue'
+import TaskListModern from './components/TaskListModern.vue'
+import TaskEditorModern from './components/TaskEditorModern.vue'
+import ModelManagerModern from './components/ModelManagerModern.vue'
 
 // 路由配置
 const routes = [
   { path: '/', name: 'Dashboard', component: Dashboard },
-  { path: '/tasks', name: 'TaskList', component: TaskList },
-  { path: '/tasks/new', name: 'TaskEditor', component: TaskEditor },
-  { path: '/tasks/:id/edit', name: 'TaskEdit', component: TaskEditor },
-  { path: '/models', name: 'ModelManager', component: ModelManager }
+  { path: '/tasks', name: 'TaskList', component: TaskListModern },
+  { path: '/tasks/new', name: 'TaskEditor', component: TaskEditorModern },
+  { path: '/tasks/:id/edit', name: 'TaskEdit', component: TaskEditorModern },
+  { path: '/models', name: 'ModelManager', component: ModelManagerModern }
 ]
 
 const router = createRouter({

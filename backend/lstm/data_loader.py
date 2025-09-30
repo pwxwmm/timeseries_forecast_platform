@@ -23,7 +23,8 @@ from sklearn.impute import SimpleImputer
 # 添加项目根目录到 Python 路径
 sys.path.append(str(Path(__file__).parent.parent))
 
-from core.prometheus_api import PrometheusAPI, PrometheusConfig
+# 延迟导入以避免循环依赖
+# from core.prometheus_api import PrometheusAPI, PrometheusConfig
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +32,9 @@ logger = logging.getLogger(__name__)
 class DataLoader:
     """数据加载器"""
 
-    def __init__(self, config: Optional[Dict] = None):
+    def __init__(self, config: Optional[Dict] = None, prometheus_api=None):
         self.config = config or {}
-        self.prometheus_api = PrometheusAPI(PrometheusConfig())
+        self.prometheus_api = prometheus_api
 
     def load_prometheus_data(
         self, user: str, start_time: datetime, end_time: datetime, step: str = "1h"
@@ -54,6 +55,12 @@ class DataLoader:
         logger.info(f"Time range: {start_time} to {end_time}")
 
         try:
+            if self.prometheus_api is None:
+                # 延迟导入以避免循环依赖
+                from core.prometheus_api import PrometheusAPI, PrometheusConfig
+
+                self.prometheus_api = PrometheusAPI(PrometheusConfig())
+
             metrics = self.prometheus_api.get_storage_metrics(
                 user=user, start=start_time, end=end_time, step=step
             )

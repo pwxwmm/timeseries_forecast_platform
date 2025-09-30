@@ -1,155 +1,255 @@
 <template>
   <div class="dashboard">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>仪表板</h1>
-      <p>时间序列预测平台概览</p>
+    <!-- 欢迎区域 -->
+    <div class="welcome-section">
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <h1 class="welcome-title">
+            <span class="greeting">欢迎回来，</span>
+            <span class="username">{{ currentUser || '用户' }}</span>
+          </h1>
+          <p class="welcome-subtitle">时间序列预测平台 - 让数据预测更智能</p>
+        </div>
+        <div class="welcome-actions">
+          <el-button type="primary" size="large" @click="$router.push('/tasks/new')">
+            <el-icon><Plus /></el-icon>
+            创建新任务
+          </el-button>
+          <el-button size="large" @click="refreshStats" :loading="loading">
+            <el-icon><Refresh /></el-icon>
+            刷新数据
+          </el-button>
+        </div>
+      </div>
     </div>
 
     <!-- 统计卡片 -->
-    <el-row :gutter="20" class="stats-row">
-      <el-col :span="6">
-        <el-card class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon tasks">
+    <div class="stats-grid">
+      <div class="stat-card tasks" @click="$router.push('/tasks')">
+        <div class="stat-background">
+          <div class="stat-pattern"></div>
+        </div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <div class="stat-icon">
               <el-icon><List /></el-icon>
             </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ stats.tasks?.total || 0 }}</div>
-              <div class="stat-label">总任务数</div>
+            <div class="stat-trend" :class="getTrendClass('tasks')">
+              <el-icon><TrendCharts /></el-icon>
+              <span>+12%</span>
             </div>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon models">
+          <div class="stat-body">
+            <div class="stat-value">{{ stats.tasks?.total || 0 }}</div>
+            <div class="stat-label">总任务数</div>
+            <div class="stat-detail">
+              <span class="running">{{ stats.tasks?.running || 0 }} 运行中</span>
+              <span class="completed">{{ stats.tasks?.completed || 0 }} 已完成</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card models" @click="$router.push('/models')">
+        <div class="stat-background">
+          <div class="stat-pattern"></div>
+        </div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <div class="stat-icon">
               <el-icon><Cpu /></el-icon>
             </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ stats.models?.total || 0 }}</div>
-              <div class="stat-label">总模型数</div>
+            <div class="stat-trend" :class="getTrendClass('models')">
+              <el-icon><TrendCharts /></el-icon>
+              <span>+8%</span>
             </div>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon users">
+          <div class="stat-body">
+            <div class="stat-value">{{ stats.models?.total || 0 }}</div>
+            <div class="stat-label">总模型数</div>
+            <div class="stat-detail">
+              <span class="training">{{ stats.models?.training || 0 }} 训练中</span>
+              <span class="ready">{{ stats.models?.ready || 0 }} 就绪</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card users">
+        <div class="stat-background">
+          <div class="stat-pattern"></div>
+        </div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <div class="stat-icon">
               <el-icon><User /></el-icon>
             </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ stats.users || 0 }}</div>
-              <div class="stat-label">用户数</div>
+            <div class="stat-trend" :class="getTrendClass('users')">
+              <el-icon><TrendCharts /></el-icon>
+              <span>+5%</span>
             </div>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card">
-          <div class="stat-content">
-            <div class="stat-icon running">
+          <div class="stat-body">
+            <div class="stat-value">{{ stats.users || 0 }}</div>
+            <div class="stat-label">活跃用户</div>
+            <div class="stat-detail">
+              <span class="online">{{ stats.users || 0 }} 在线</span>
+              <span class="total">{{ stats.users || 0 }} 总计</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card performance">
+        <div class="stat-background">
+          <div class="stat-pattern"></div>
+        </div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <div class="stat-icon">
               <el-icon><Loading /></el-icon>
             </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ (stats.tasks?.running || 0) + (stats.models?.training || 0) }}</div>
-              <div class="stat-label">运行中</div>
+            <div class="stat-trend" :class="getTrendClass('performance')">
+              <el-icon><TrendCharts /></el-icon>
+              <span>+15%</span>
             </div>
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+          <div class="stat-body">
+            <div class="stat-value">{{ (stats.tasks?.running || 0) + (stats.models?.training || 0) }}</div>
+            <div class="stat-label">运行中任务</div>
+            <div class="stat-detail">
+              <span class="cpu">CPU: 65%</span>
+              <span class="memory">内存: 78%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 任务趋势图 -->
+    <div class="trend-chart-section">
+      <TaskTrendChart />
+    </div>
 
     <!-- 主要内容区域 -->
-    <el-row :gutter="20" class="main-content">
-      <!-- 左侧：最近任务 -->
-      <el-col :span="12">
-        <el-card class="content-card">
-          <template #header>
-            <div class="card-header">
-              <span>最近任务</span>
-              <el-button type="primary" size="small" @click="$router.push('/tasks')">
-                查看全部
-              </el-button>
+    <div class="main-content-grid">
+      <!-- 最近任务 -->
+      <div class="content-card recent-tasks">
+        <div class="card-header">
+          <div class="header-left">
+            <h3 class="card-title">最近任务</h3>
+            <p class="card-subtitle">查看最新的预测任务</p>
+          </div>
+          <el-button type="primary" size="small" @click="$router.push('/tasks')">
+            查看全部
+            <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </div>
+        <div class="card-content">
+          <div v-if="recentTasks.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <el-icon><List /></el-icon>
             </div>
-          </template>
-          <div class="task-list">
-            <div v-if="recentTasks.length === 0" class="empty-state">
-              <el-empty description="暂无任务" />
-            </div>
-            <div v-else>
-              <div
-                v-for="task in recentTasks"
-                :key="task.id"
-                class="task-item"
-              >
-                <div class="task-info">
-                  <div class="task-name">{{ task.name }}</div>
-                  <div class="task-meta">
-                    <span class="task-user">{{ task.user }}</span>
-                    <span class="task-time">{{ utils.formatTime(task.created_at) }}</span>
-                  </div>
+            <p class="empty-text">暂无任务</p>
+            <el-button type="primary" size="small" @click="$router.push('/tasks/new')">
+              创建第一个任务
+            </el-button>
+          </div>
+          <div v-else class="task-list">
+            <div
+              v-for="task in recentTasks"
+              :key="task.id"
+              class="task-item"
+              @click="$router.push(`/tasks/${task.id}`)"
+            >
+              <div class="task-avatar">
+                <el-avatar :size="40" :style="{ backgroundColor: getTaskColor(task.status) }">
+                  <el-icon><TrendCharts /></el-icon>
+                </el-avatar>
+              </div>
+              <div class="task-info">
+                <div class="task-name">{{ task.name }}</div>
+                <div class="task-meta">
+                  <span class="task-user">
+                    <el-icon><User /></el-icon>
+                    {{ task.user }}
+                  </span>
+                  <span class="task-time">
+                    <el-icon><Clock /></el-icon>
+                    {{ utils.formatTime(task.created_at) }}
+                  </span>
                 </div>
-                <div class="task-status">
-                  <el-tag
-                    :type="getStatusType(task.status)"
-                    size="small"
-                  >
-                    {{ utils.getStatusText(task.status) }}
-                  </el-tag>
-                </div>
+              </div>
+              <div class="task-status">
+                <el-tag
+                  :type="getStatusType(task.status)"
+                  size="small"
+                  effect="light"
+                >
+                  {{ utils.getStatusText(task.status) }}
+                </el-tag>
               </div>
             </div>
           </div>
-        </el-card>
-      </el-col>
+        </div>
+      </div>
 
-      <!-- 右侧：系统状态 -->
-      <el-col :span="12">
-        <el-card class="content-card">
-          <template #header>
-            <div class="card-header">
-              <span>系统状态</span>
-              <el-button
-                type="text"
-                size="small"
-                @click="refreshStats"
-                :loading="loading"
-              >
-                <el-icon><Refresh /></el-icon>
-                刷新
-              </el-button>
-            </div>
-          </template>
-          <div class="system-status">
+      <!-- 系统状态 -->
+      <div class="content-card system-status">
+        <div class="card-header">
+          <div class="header-left">
+            <h3 class="card-title">系统状态</h3>
+            <p class="card-subtitle">实时监控系统运行状态</p>
+          </div>
+          <el-button
+            type="text"
+            size="small"
+            @click="refreshStats"
+            :loading="loading"
+          >
+            <el-icon><Refresh /></el-icon>
+            刷新
+          </el-button>
+        </div>
+        <div class="card-content">
+          <div class="status-grid">
             <div class="status-item">
-              <div class="status-label">API 服务</div>
-              <div class="status-value">
-                <el-tag :type="apiStatus ? 'success' : 'danger'" size="small">
-                  {{ apiStatus ? '正常' : '异常' }}
-                </el-tag>
+              <div class="status-icon" :class="{ online: apiStatus, offline: !apiStatus }">
+                <el-icon><Connection /></el-icon>
+              </div>
+              <div class="status-info">
+                <div class="status-label">API 服务</div>
+                <div class="status-value" :class="{ success: apiStatus, error: !apiStatus }">
+                  {{ apiStatus ? '正常运行' : '服务异常' }}
+                </div>
               </div>
             </div>
+            
             <div class="status-item">
-              <div class="status-label">Prometheus</div>
-              <div class="status-value">
-                <el-tag :type="prometheusStatus ? 'success' : 'danger'" size="small">
+              <div class="status-icon" :class="{ online: prometheusStatus, offline: !prometheusStatus }">
+                <el-icon><Monitor /></el-icon>
+              </div>
+              <div class="status-info">
+                <div class="status-label">Prometheus</div>
+                <div class="status-value" :class="{ success: prometheusStatus, error: !prometheusStatus }">
                   {{ prometheusStatus ? '连接正常' : '连接失败' }}
-                </el-tag>
+                </div>
               </div>
             </div>
+            
             <div class="status-item">
-              <div class="status-label">最后更新</div>
-              <div class="status-value">
-                {{ lastUpdateTime }}
+              <div class="status-icon online">
+                <el-icon><Clock /></el-icon>
+              </div>
+              <div class="status-info">
+                <div class="status-label">最后更新</div>
+                <div class="status-value">{{ lastUpdateTime }}</div>
               </div>
             </div>
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </div>
+      </div>
+    </div>
 
     <!-- 快速操作 -->
     <el-row :gutter="20" class="quick-actions">
@@ -243,6 +343,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { api, utils } from '../api'
+import TaskTrendChart from './TaskTrendChart.vue'
 
 // 响应式数据
 const loading = ref(false)
@@ -254,6 +355,7 @@ const lastUpdateTime = ref('')
 const showPredictionDialog = ref(false)
 const predictionLoading = ref(false)
 const predictionFormRef = ref()
+const currentUser = ref('')
 
 const predictionForm = reactive({
   user: '',
@@ -283,6 +385,21 @@ const getStatusType = (status) => {
     training: 'warning'
   }
   return types[status] || 'info'
+}
+
+const getTaskColor = (status) => {
+  const colors = {
+    pending: '#409eff',
+    running: '#e6a23c',
+    completed: '#67c23a',
+    failed: '#f56c6c',
+    training: '#e6a23c'
+  }
+  return colors[status] || '#909399'
+}
+
+const getTrendClass = (type) => {
+  return 'positive' // 可以后续根据实际数据动态计算
 }
 
 // 方法
@@ -340,6 +457,9 @@ const handleQuickPrediction = async () => {
 
 // 生命周期
 onMounted(() => {
+  // 获取当前用户
+  currentUser.value = localStorage.getItem('currentUser') || '用户'
+  
   refreshStats()
   
   // 设置自动刷新
@@ -349,183 +469,543 @@ onMounted(() => {
 
 <style scoped>
 .dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-.page-header {
-  margin-bottom: 24px;
+/* 欢迎区域 */
+.welcome-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 32px;
+  color: white;
+  position: relative;
+  overflow: hidden;
 }
 
-.page-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: #303133;
+.welcome-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-20px, -20px) rotate(180deg); }
+}
+
+.welcome-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-text {
+  flex: 1;
+}
+
+.welcome-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.greeting {
+  display: block;
+  font-size: 18px;
+  opacity: 0.9;
   margin-bottom: 8px;
 }
 
-.page-header p {
-  color: #909399;
-  font-size: 14px;
+.username {
+  background: linear-gradient(45deg, #ff6b6b, #feca57);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.stats-row {
-  margin-bottom: 24px;
+.welcome-subtitle {
+  font-size: 16px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.welcome-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.welcome-actions .el-button {
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.welcome-actions .el-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 统计卡片网格 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .stat-card {
-  height: 100px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stat-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  opacity: 0.1;
+  border-radius: 50%;
+}
+
+.stat-card.tasks .stat-background {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.stat-card.models .stat-background {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.stat-card.users .stat-background {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.stat-card.performance .stat-background {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.stat-pattern {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>') no-repeat center;
+  background-size: contain;
+  opacity: 0.3;
 }
 
 .stat-content {
+  position: relative;
+  z-index: 1;
+}
+
+.stat-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 100%;
+  margin-bottom: 16px;
 }
 
 .stat-icon {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 16px;
-  font-size: 24px;
+  font-size: 20px;
   color: white;
 }
 
-.stat-icon.tasks {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.stat-card.tasks .stat-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
-.stat-icon.models {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+.stat-card.models .stat-icon {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
 }
 
-.stat-icon.users {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+.stat-card.users .stat-icon {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
 }
 
-.stat-icon.running {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+.stat-card.performance .stat-icon {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
 }
 
-.stat-info {
-  flex: 1;
+.stat-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.stat-trend.positive {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.stat-body {
+  text-align: left;
 }
 
 .stat-value {
-  font-size: 28px;
-  font-weight: 600;
-  color: #303133;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #909399;
+  color: #6b7280;
+  margin-bottom: 12px;
 }
 
-.main-content {
+.stat-detail {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+}
+
+.stat-detail span {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.stat-detail .running {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.stat-detail .completed {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.stat-detail .training {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.stat-detail .ready {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.stat-detail .online {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.stat-detail .total {
+  background: rgba(107, 114, 128, 0.1);
+  color: #6b7280;
+}
+
+.stat-detail .cpu {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.stat-detail .memory {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+/* 趋势图区域 */
+.trend-chart-section {
   margin-bottom: 24px;
 }
 
+/* 主要内容网格 */
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
 .content-card {
-  height: 400px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.content-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  margin-bottom: 20px;
 }
 
+.header-left {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.card-content {
+  min-height: 200px;
+}
+
+/* 任务列表 */
 .task-list {
-  height: 320px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .task-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.task-item:last-child {
-  border-bottom: none;
+.task-item:hover {
+  background: #e2e8f0;
+  transform: translateX(4px);
+}
+
+.task-avatar {
+  flex-shrink: 0;
 }
 
 .task-info {
   flex: 1;
+  min-width: 0;
 }
 
 .task-name {
   font-size: 14px;
-  font-weight: 500;
-  color: #303133;
+  font-weight: 600;
+  color: #1f2937;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .task-meta {
+  display: flex;
+  gap: 16px;
   font-size: 12px;
-  color: #909399;
+  color: #6b7280;
 }
 
-.task-user {
-  margin-right: 12px;
+.task-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.system-status {
-  padding: 20px 0;
+.task-status {
+  flex-shrink: 0;
+}
+
+/* 系统状态 */
+.status-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .status-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
 }
 
-.status-item:last-child {
-  border-bottom: none;
+.status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+}
+
+.status-icon.online {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.status-icon.offline {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.status-info {
+  flex: 1;
 }
 
 .status-label {
   font-size: 14px;
-  color: #606266;
+  color: #6b7280;
+  margin-bottom: 4px;
 }
 
 .status-value {
   font-size: 14px;
-  color: #303133;
+  font-weight: 600;
 }
 
+.status-value.success {
+  color: #16a34a;
+}
+
+.status-value.error {
+  color: #dc2626;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+/* 快速操作 */
 .quick-actions {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .action-buttons {
   display: flex;
   gap: 16px;
   justify-content: center;
-  padding: 20px 0;
+  padding: 24px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+.action-buttons .el-button {
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.action-buttons .el-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 对话框 */
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 
-.empty-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .main-content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-content {
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+  }
+  
+  .welcome-title {
+    font-size: 28px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
 }
 </style>
+
+</style>
+

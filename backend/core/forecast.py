@@ -24,6 +24,11 @@ import json
 from datetime import datetime
 
 # 导入自定义模块
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 from lstm.model import LSTMForecaster, create_model
 from lstm.utils import MetricsCalculator, DataValidator, ModelManager
 from lstm.data_loader import DataLoader
