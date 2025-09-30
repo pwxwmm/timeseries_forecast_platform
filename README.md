@@ -26,6 +26,7 @@
 ## 🌐 在线演示
 
 **Daemon 演示环境**: http://118.31.237.143:3000/
+<img width="2512" height="1247" alt="image" src="https://github.com/user-attachments/assets/fe64f958-4789-4bcd-8296-da3c829e78f2" />
 
 > 这是一个运行在服务器上的演示环境，展示了完整的时间序列预测平台功能。您可以直接访问体验所有功能，包括任务创建、模型训练、预测分析等。
 
