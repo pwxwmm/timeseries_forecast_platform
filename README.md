@@ -23,6 +23,12 @@
 **Weather**: Cloudy
 **博客地址**: https://mmwei.blog.csdn.net/article/details/152315032?fromshare=blogdetail&sharetype=blogdetail&sharerId=152315032&sharerefer=PC&sharesource=qq_28513801&sharefrom=from_link
 
+## 🌐 在线演示
+
+**Daemon 演示环境**: http://118.31.237.143:3000/
+
+> 这是一个运行在服务器上的演示环境，展示了完整的时间序列预测平台功能。您可以直接访问体验所有功能，包括任务创建、模型训练、预测分析等。
+
 ## 🚀 功能特性
 
 - **🧠 LSTM 深度学习模型**: 主要基于 LSTM 的时间序列预测，支持 GRU 和 Transformer（可选）
@@ -113,6 +119,19 @@ timeseries_forecast_platform/
 - **Nginx**: 反向代理和静态文件服务
 
 ## 🚀 快速开始
+
+### 在线体验（推荐）
+
+**🌐 直接访问演示环境**: http://118.31.237.143:3000/
+
+无需安装任何环境，直接体验完整功能：
+- ✅ 现代化仪表盘界面
+- ✅ 任务创建和管理
+- ✅ 模型训练和预测
+- ✅ 实时数据可视化
+- ✅ 完整的API功能
+
+### 本地部署
 
 ### 环境要求
 
