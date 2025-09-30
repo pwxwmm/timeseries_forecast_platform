@@ -415,10 +415,30 @@ const saveTask = async () => {
       return
     }
     
+    // 构建符合后端API要求的数据结构
     const taskData = {
-      ...form,
+      name: form.name,
       user: currentUser,
-      status: 'pending'
+      metric_query: form.metric_query,
+      config: {
+        description: form.description,
+        priority: form.priority,
+        prometheus_url: form.prometheus_url,
+        time_range: form.time_range,
+        step: form.step,
+        model_type: form.model_type,
+        sequence_length: form.sequence_length,
+        hidden_dim: form.hidden_dim,
+        num_layers: form.num_layers,
+        prediction_steps: form.prediction_steps,
+        learning_rate: form.learning_rate,
+        batch_size: form.batch_size,
+        epochs: form.epochs,
+        use_gpu: form.use_gpu,
+        early_stopping: form.early_stopping,
+        validation_split: form.validation_split,
+        random_seed: form.random_seed
+      }
     }
     
     if (isEdit.value) {

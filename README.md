@@ -1212,6 +1212,7 @@ pip install -r requirements-dev.txt  # 开发依赖
 
 cd ../frontend
 npm install
+npm run dev -- --host 0.0.0.0 --port 3000
 ```
 
 ### 代码规范

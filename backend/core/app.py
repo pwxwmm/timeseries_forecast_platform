@@ -315,6 +315,8 @@ async def create_task(
 ):
     """创建预测任务"""
     try:
+        logger.info(f"Creating task with data: {task_data}")
+        
         # 创建任务
         task = store.create_task(
             name=task_data.name,
@@ -322,6 +324,7 @@ async def create_task(
             metric_query=task_data.metric_query,
             config=task_data.config,
         )
+        logger.info(f"Task created successfully: {task.id}")
 
         # 创建模型
         model = store.create_model(
@@ -331,6 +334,7 @@ async def create_task(
             model_type="lstm",
             config=task_data.config,
         )
+        logger.info(f"Model created successfully: {model.id}")
 
         # 更新任务关联模型
         store.update_task(task.id, model_id=model.id)
@@ -340,6 +344,8 @@ async def create_task(
 
         return task
     except Exception as e:
+        logger.error(f"Failed to create task: {e}")
+        logger.error(f"Task data: {task_data}")
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -357,6 +363,34 @@ async def get_user_tasks(username: str, store: JSONStore = Depends(get_store)):
     """获取用户的所有任务"""
     tasks = store.get_tasks_by_user(username)
     return tasks
+
+
+@app.put("/tasks/{task_id}", response_model=TaskResponse)
+async def update_task(
+    task_id: str,
+    task_data: TaskCreate,
+    store: JSONStore = Depends(get_store),
+):
+    """更新任务"""
+    try:
+        # 检查任务是否存在
+        existing_task = store.get_task(task_id)
+        if not existing_task:
+            raise HTTPException(status_code=404, detail="Task not found")
+        
+        # 更新任务
+        updated_task = store.update_task(
+            task_id=task_id,
+            name=task_data.name,
+            user=task_data.user,
+            metric_query=task_data.metric_query,
+            config=task_data.config,
+        )
+        
+        return updated_task
+    except Exception as e:
+        logger.error(f"Failed to update task {task_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update task")
 
 
 @app.delete("/tasks/{task_id}")

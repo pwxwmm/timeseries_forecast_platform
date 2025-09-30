@@ -99,6 +99,10 @@ export const api = {
     return request.get(`/tasks/user/${username}`)
   },
 
+  async updateTask(taskId, taskData) {
+    return request.put(`/tasks/${taskId}`, taskData)
+  },
+
   async deleteTask(taskId) {
     return request.delete(`/tasks/${taskId}`)
   },
