@@ -463,9 +463,10 @@ onMounted(() => {
 }
 
 .content-wrapper {
-  max-width: 1400px;
+  max-width: 95vw;
   margin: 0 auto;
   padding: 32px;
+  min-width: 1200px;
 }
 
 /* 对话框样式 */
@@ -476,6 +477,20 @@ onMounted(() => {
 }
 
 /* 响应式设计 */
+@media (min-width: 1920px) {
+  .content-wrapper {
+    max-width: 1800px;
+    padding: 40px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .content-wrapper {
+    max-width: 1200px;
+    padding: 24px;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
@@ -485,6 +500,8 @@ onMounted(() => {
   
   .content-wrapper {
     padding: 20px;
+    min-width: auto;
+    max-width: 100vw;
   }
   
   .main-header {
