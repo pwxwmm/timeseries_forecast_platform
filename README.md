@@ -314,8 +314,8 @@ docker run -d -p 3000:3000 timeseries-forecast-frontend
 curl -X POST "http://localhost:8000/users" \
      -H "Content-Type: application/json" \
      -d '{
-       "username": "alice",
-       "email": "alice@example.com"
+       "username": "mmwei3",
+       "email": "mmwei3@example.com"
      }'
 ```
 
@@ -338,8 +338,8 @@ curl -X POST "http://localhost:8000/tasks" \
      -H "Content-Type: application/json" \
      -d '{
        "name": "Storage Usage Prediction",
-       "user": "alice",
-       "metric_query": "storage_used_bytes{user=\"alice\"}",
+       "user": "mmwei3",
+       "metric_query": "storage_used_bytes{user=\"mmwei3\"}",
        "config": {
          "sequence_length": 24,
          "prediction_steps": 1,
@@ -377,8 +377,8 @@ curl -X POST "http://localhost:8000/tasks" \
 curl -X POST "http://localhost:8000/predict" \
      -H "Content-Type: application/json" \
      -d '{
-       "user": "alice",
-       "metric_query": "storage_used_bytes{user=\"alice\"}",
+       "user": "mmwei3",
+       "metric_query": "storage_used_bytes{user=\"mmwei3\"}",
        "prediction_steps": 3
      }'
 ```
@@ -391,10 +391,10 @@ curl -X POST "http://localhost:8000/predict" \
 cd backend/lstm
 
 # 基本训练（使用默认 LSTM 模型）
-python train.py --user alice --epochs 50
+python train.py --user mmwei3 --epochs 50
 
 # 高级 LSTM 训练（生产级配置）
-python train.py --user alice \
+python train.py --user mmwei3 \
     --model-type lstm \
     --epochs 100 \
     --batch-size 128 \
@@ -403,13 +403,13 @@ python train.py --user alice \
     --num-layers 4
 
 # 使用 GRU 模型（推荐用于快速训练）
-python train.py --user alice \
+python train.py --user mmwei3 \
     --model-type gru \
     --hidden-dim 64 \
     --num-layers 2
 
 # 使用 Transformer 模型（A100/H100 推荐配置）
-python train.py --user alice \
+python train.py --user mmwei3 \
     --model-type transformer \
     --d-model 512 \
     --nhead 16 \
@@ -422,15 +422,15 @@ python train.py --user alice \
 
 ```bash
 # 基本预测
-python predict.py --user alice --steps 3
+python predict.py --user mmwei3 --steps 3
 
 # 指定模型预测
-python predict.py --user alice \
+python predict.py --user mmwei3 \
     --model-name model_20231201_120000 \
     --steps 5
 
 # 不保存到 Prometheus
-python predict.py --user alice \
+python predict.py --user mmwei3 \
     --steps 1 \
     --no-prometheus
 ```
@@ -668,12 +668,12 @@ volumes:
 
 ```bash
 # 训练存储预测模型
-python train.py --user alice \
-    --metric-query "storage_used_bytes{user='alice'}" \
+python train.py --user mmwei3 \
+    --metric-query "storage_used_bytes{user='mmwei3'}" \
     --epochs 100
 
 # 预测未来24小时
-python predict.py --user alice --steps 24
+python predict.py --user mmwei3 --steps 24
 ```
 
 ### 2. GPU 资源预测
@@ -684,12 +684,12 @@ python predict.py --user alice --steps 24
 
 ```bash
 # 训练 GPU 预测模型
-python train.py --user alice \
-    --metric-query "gpu_memory_used{user='alice'}" \
+python train.py --user mmwei3 \
+    --metric-query "gpu_memory_used{user='mmwei3'}" \
     --epochs 150
 
 # 预测未来12小时
-python predict.py --user alice --steps 12
+python predict.py --user mmwei3 --steps 12
 ```
 
 ### 3. 网络带宽预测
@@ -700,12 +700,12 @@ python predict.py --user alice --steps 12
 
 ```bash
 # 训练网络预测模型
-python train.py --user alice \
-    --metric-query "network_throughput{user='alice'}" \
+python train.py --user mmwei3 \
+    --metric-query "network_throughput{user='mmwei3'}" \
     --sequence-length 48
 
 # 预测未来6小时
-python predict.py --user alice --steps 6
+python predict.py --user mmwei3 --steps 6
 ```
 
 ### 4. CPU 使用率预测
@@ -731,8 +731,8 @@ POST /users
 Content-Type: application/json
 
 {
-  "username": "alice",
-  "email": "alice@example.com"
+  "username": "mmwei3",
+  "email": "mmwei3@example.com"
 }
 ```
 
@@ -755,8 +755,8 @@ Content-Type: application/json
 
 {
   "name": "Storage Usage Prediction",
-  "user": "alice",
-  "metric_query": "storage_used_bytes{user=\"alice\"}",
+  "user": "mmwei3",
+  "metric_query": "storage_used_bytes{user=\"mmwei3\"}",
   "config": {
     "sequence_length": 24,
     "prediction_steps": 1,
@@ -810,8 +810,8 @@ POST /predict
 Content-Type: application/json
 
 {
-  "user": "alice",
-  "metric_query": "storage_used_bytes{user=\"alice\"}",
+  "user": "mmwei3",
+  "metric_query": "storage_used_bytes{user=\"mmwei3\"}",
   "prediction_steps": 3
 }
 ```
@@ -819,8 +819,8 @@ Content-Type: application/json
 **响应示例**:
 ```json
 {
-  "user": "alice",
-  "metric_query": "storage_used_bytes{user=\"alice\"}",
+  "user": "mmwei3",
+  "metric_query": "storage_used_bytes{user=\"mmwei3\"}",
   "predictions": [1024.5, 1050.2, 1075.8],
   "timestamps": [
     "2023-12-01T13:00:00",
@@ -962,7 +962,7 @@ telnet localhost 9090
 **解决方案**:
 ```bash
 # 检查数据是否充足
-curl "http://localhost:8000/data/metrics/alice?hours=168"
+curl "http://localhost:8000/data/metrics/mmwei3?hours=168"
 
 # 检查日志
 tail -f backend/logs/app.log
@@ -979,14 +979,14 @@ python quick_start.py
 **解决方案**:
 ```bash
 # 检查模型是否训练完成
-curl http://localhost:8000/models/user/alice
+curl http://localhost:8000/models/user/mmwei3
 
 # 验证输入数据
-curl "http://localhost:8000/data/metrics/alice?hours=48"
+curl "http://localhost:8000/data/metrics/mmwei3?hours=48"
 
 # 重新训练模型
 cd backend/lstm
-python train.py --user alice --epochs 200
+python train.py --user mmwei3 --epochs 200
 ```
 
 #### 4. 内存不足
@@ -996,16 +996,16 @@ python train.py --user alice --epochs 200
 **解决方案**:
 ```bash
 # 减少批次大小
-python train.py --user alice --batch-size 16
+python train.py --user mmwei3 --batch-size 16
 
 # 减少序列长度
-python train.py --user alice --sequence-length 12
+python train.py --user mmwei3 --sequence-length 12
 
 # 使用更小的模型
-python train.py --user alice --hidden-dim 32 --num-layers 1
+python train.py --user mmwei3 --hidden-dim 32 --num-layers 1
 
 # 使用 GRU 替代 LSTM（参数更少）
-python train.py --user alice --model-type gru
+python train.py --user mmwei3 --model-type gru
 ```
 
 #### 5. GPU 相关问题
@@ -1029,11 +1029,11 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 # T4: batch-size 32-64
 # V100: batch-size 64-128  
 # A100: batch-size 128-256
-python train.py --user alice --batch-size 64
+python train.py --user mmwei3 --batch-size 64
 
 # 强制使用 CPU
 export CUDA_VISIBLE_DEVICES=""
-python train.py --user alice
+python train.py --user mmwei3
 ```
 
 #### 6. 前端无法连接后端

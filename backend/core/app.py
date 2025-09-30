@@ -316,7 +316,7 @@ async def create_task(
     """创建预测任务"""
     try:
         logger.info(f"Creating task with data: {task_data}")
-        
+
         # 创建任务
         task = store.create_task(
             name=task_data.name,
@@ -377,7 +377,7 @@ async def update_task(
         existing_task = store.get_task(task_id)
         if not existing_task:
             raise HTTPException(status_code=404, detail="Task not found")
-        
+
         # 更新任务
         updated_task = store.update_task(
             task_id=task_id,
@@ -386,7 +386,7 @@ async def update_task(
             metric_query=task_data.metric_query,
             config=task_data.config,
         )
-        
+
         return updated_task
     except Exception as e:
         logger.error(f"Failed to update task {task_id}: {e}")
