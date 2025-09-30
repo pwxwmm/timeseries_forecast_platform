@@ -463,9 +463,9 @@ onMounted(() => {
 }
 
 .content-wrapper {
-  max-width: 95vw;
+  max-width: 98vw;
   margin: 0 auto;
-  padding: 32px;
+  padding: 24px;
   min-width: 1200px;
 }
 
@@ -479,15 +479,22 @@ onMounted(() => {
 /* 响应式设计 */
 @media (min-width: 1920px) {
   .content-wrapper {
-    max-width: 1800px;
-    padding: 40px;
+    max-width: 98vw;
+    padding: 32px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .content-wrapper {
+    max-width: 98vw;
+    padding: 28px;
   }
 }
 
 @media (max-width: 1400px) {
   .content-wrapper {
-    max-width: 1200px;
-    padding: 24px;
+    max-width: 95vw;
+    padding: 20px;
   }
 }
 

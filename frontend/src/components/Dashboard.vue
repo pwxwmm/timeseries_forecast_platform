@@ -477,8 +477,8 @@ onMounted(() => {
 .welcome-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 20px;
-  padding: 40px;
-  margin-bottom: 32px;
+  padding: 32px;
+  margin-bottom: 24px;
   color: white;
   position: relative;
   overflow: hidden;
@@ -559,8 +559,8 @@ onMounted(() => {
 /* 统计卡片网格 */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
   margin-bottom: 32px;
   max-width: 100%;
 }
@@ -745,14 +745,14 @@ onMounted(() => {
 
 /* 趋势图区域 */
 .trend-chart-section {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 /* 主要内容网格 */
 .main-content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 20px;
   margin-bottom: 32px;
   max-width: 100%;
 }
@@ -945,7 +945,7 @@ onMounted(() => {
 
 /* 快速操作 */
 .quick-actions {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .action-buttons {
@@ -978,19 +978,34 @@ onMounted(() => {
 }
 
 /* 响应式设计 */
-@media (min-width: 1600px) {
+@media (min-width: 1800px) {
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
   }
   
   .main-content-grid {
     grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  
+  .main-content-grid {
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
   }
 }
 
 @media (max-width: 1400px) {
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
   }
 }
 
