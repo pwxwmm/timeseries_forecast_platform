@@ -1,0 +1,35 @@
+# Prometheus 配置
+prometheus:
+  base_url: "http://localhost:9090"
+  pushgateway_url: "http://localhost:9091"
+  timeout: 30
+
+# 模型配置
+model:
+  default_sequence_length: 24
+  default_prediction_steps: 1
+  default_epochs: 100
+  default_batch_size: 32
+  default_learning_rate: 0.001
+  early_stopping_patience: 10
+
+# 数据配置
+data:
+  default_history_days: 30
+  default_prediction_hours: 24
+  data_dir: "data"
+  models_dir: "models"
+
+# 应用配置
+app:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  log_level: "INFO"
+
+# 用户配置
+users:
+  default_preferences:
+    theme: "light"
+    language: "zh-CN"
+    timezone: "Asia/Shanghai"
